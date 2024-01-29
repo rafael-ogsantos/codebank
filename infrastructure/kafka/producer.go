@@ -1,6 +1,8 @@
 package kafka
 
-import ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+import (
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+)
 
 type KafkaProducer struct {
 	Producer *ckafka.Producer
@@ -10,11 +12,17 @@ func NewKafkaProducer() KafkaProducer {
 	return KafkaProducer{}
 }
 
-func (k *KafkaProducer) SetupProducer(bootstrap string) {
+func (k *KafkaProducer) SetupProducer(bootstrap string) error {
 	configMap := &ckafka.ConfigMap{
-		"bootsrap.servers": bootstrap,
+		"bootstrap.servers": bootstrap,
 	}
-	k.Producer, _ = ckafka.NewProducer(configMap)
+
+	var err error
+	k.Producer, err = ckafka.NewProducer(configMap)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (k *KafkaProducer) Publish(msg string, topic string) error {

@@ -6,6 +6,8 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - kafka_confluent
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -24,6 +26,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - kafka_confluent
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:6.0.1
@@ -39,6 +43,8 @@ services:
       PORT: 9021
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - kafka_confluent
 
   kafka-connect:
     image: confluentinc/cp-kafka-connect-base:6.0.0
@@ -90,6 +96,8 @@ services:
         sleep infinity
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - kafka_confluent
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
@@ -110,6 +118,8 @@ services:
       - 9200:9200
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - kafka_confluent
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.11.2
@@ -121,3 +131,9 @@ services:
       ELASTICSEARCH_HOSTS: '["http://es01:9200"]'
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - kafka_confluent
+
+networks:
+  kafka_confluent:
+    driver: bridge
